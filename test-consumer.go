@@ -12,12 +12,13 @@ const KAFKA_URL string = "localhost:9092"
 const DEFAULT_TOPIC string = "test"
 
 func main() {
-    // parse input flags
+    // parse input for topic to subscribe to
     topicPtr := flag.String("topic", DEFAULT_TOPIC, "kafka topic to subscribe to")
     flag.Parse()
     
 	log.Printf("STARTED LISTENING ON URL=%s FOR TOPIC=%s\n", KAFKA_URL, *topicPtr)
 	
+	// create consumer, which keeps a connection to the kafka server
 	consumer, err := sarama.NewConsumer([]string{KAFKA_URL}, nil)
 	if err != nil {
 		panic(err)
@@ -44,6 +45,7 @@ func main() {
 	signals := make(chan os.Signal, 1)
 	signal.Notify(signals, os.Interrupt)
 
+    // Start listening
 	consumedCtr := 0
 ConsumerLoop:
 	for {
